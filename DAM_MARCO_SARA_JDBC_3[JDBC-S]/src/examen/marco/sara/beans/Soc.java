@@ -1,3 +1,5 @@
+package examen.marco.sara.beans;
+
 public class Soc{
     private int id;
     private String nombre;

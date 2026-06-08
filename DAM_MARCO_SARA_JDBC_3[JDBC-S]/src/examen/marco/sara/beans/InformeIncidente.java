@@ -1,3 +1,5 @@
+package examen.marco.sara.beans;
+
 public class InformeIncidente {
     private int id;
    private boolean malwareDetectado;

@@ -1,19 +1,17 @@
 package examen.marco.sara.dao;
 
-import java.util.ArrayList;
-
-import examen.marco.sara.beans.CentroForense;
-import examen.marco.sara.motores.MotorSQL;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import examen.marco.sara.beans.Soc;
+import examen.marco.sara.motores.MotorSQL;
 
-
-public class SocDAOImpl extends AbstractDAO<Soc>{
+public class SocDAOImpl extends AbstractDAO<Soc> {
+    
     public SocDAOImpl(MotorSQL motorSQL) {
         super(motorSQL);
     }
 
-    //CONSULTAS SQL 
+    // CONSULTAS SQL
     private static final String SQL_INSERT = 
         "INSERT INTO socs (nombre, pais, nivel_seguridad, autor_examen) VALUES (?, ?, ?, ?)";
     
@@ -29,61 +27,62 @@ public class SocDAOImpl extends AbstractDAO<Soc>{
     private static final String SQL_FIND_ALL = 
         "SELECT * FROM socs ORDER BY id";
 
+    @Override
+    public void add(Soc s) {
+        try {
+            motorSQL.connect();
+            motorSQL.prepare(SQL_INSERT);
+            
+            motorSQL.getPs().setString(1, s.getNombre());
+            motorSQL.getPs().setString(2, s.getPais());
+            motorSQL.getPs().setInt(3, s.getNivelSeguridad()); // Corregido el nombre del método
+            motorSQL.getPs().setString(4, s.getAutorExamen());
 
-        @Override
-        public void add(Soc s) {
-            try {
-                motorSQL.connect();
-                motorSQL.prepare(SQL_INSERT);
-                
-                motorSQL.getPs().setString(1, s.getNombre());
-                motorSQL.getPs().setString(2, s.getPais());
-                motorSQL.getPs().setInt(3, s.getNivelSeguridad());
-                motorSQL.getPs().setString(4, s.get);
-    
-                int rows = motorSQL.executeUpdate();
-                System.out.println("[JDBC] Registro insertado. Filas afectadas: " + rows);
-            } catch (Exception e) {
-                System.out.println("Error: "+ e);
-            } finally {
-                motorSQL.close();
-            }
+            int rows = motorSQL.executeUpdate();
+            System.out.println("✨ [SUCCESS] Registro insertado en SOCs. Filas afectadas: " + rows);
+        } catch (Exception e) {
+            System.out.println("❌ Error en ADD SOC: " + e.getMessage());
+        } finally {
+            motorSQL.close();
         }
-    
-        @Override
-        public void update(int id, Soc s) {
-            try {
-                motorSQL.connect();
-                motorSQL.prepare(SQL_UPDATE);
-                motorSQL.getPs().setString(1, s.getNombre());
-                motorSQL.getPs().setString(2, s.getPais());
-                motorSQL.getPs().setInt(3, s.getNivelSeguridad());
-                motorSQL.getPs().setInt(4, id);
-    
-                motorSQL.executeUpdate();
-                System.out.println("[JDBC] Registro con ID " + id + " actualizado.");
-            } catch (Exception e) {
-            } finally {
-                motorSQL.close();
-            }
+    }
+
+    @Override
+    public void update(int id, Soc s) {
+        try {
+            motorSQL.connect();
+            motorSQL.prepare(SQL_UPDATE);
+            motorSQL.getPs().setString(1, s.getNombre());
+            motorSQL.getPs().setString(2, s.getPais());
+            motorSQL.getPs().setInt(3, s.getNivelSeguridad());
+            motorSQL.getPs().setInt(4, id);
+
+            motorSQL.executeUpdate();
+            System.out.println("✨ [SUCCESS] Registro con ID " + id + " actualizado en SOCs.");
+        } catch (Exception e) {
+            System.out.println("❌ Error en UPDATE SOC: " + e.getMessage());
+        } finally {
+            motorSQL.close();
         }
+    }
 
-            @Override
-        public void delete(int id) {
-            try {
-                motorSQL.connect();
-                motorSQL.prepare(SQL_DELETE);
-                motorSQL.getPs().setInt(1, id);
+    @Override
+    public void delete(int id) {
+        try {
+            motorSQL.connect();
+            motorSQL.prepare(SQL_DELETE);
+            motorSQL.getPs().setInt(1, id);
 
-                int rows = motorSQL.executeUpdate();
-                System.out.println("[JDBC] Registro con ID " + id + " eliminado. Filas afectadas: " + rows);
-            } catch (Exception e) {
-            } finally {
-                motorSQL.close();
-            }
+            int rows = motorSQL.executeUpdate();
+            System.out.println("✨ [SUCCESS] Registro con ID " + id + " eliminado. Filas afectadas: " + rows);
+        } catch (Exception e) {
+            System.out.println("❌ Error en DELETE SOC: " + e.getMessage());
+        } finally {
+            motorSQL.close();
         }
+    }
 
-        @Override
+    @Override
     public Soc find(int id) {
         Soc s = null;
         try {
@@ -97,10 +96,11 @@ public class SocDAOImpl extends AbstractDAO<Soc>{
                 s.setId(rs.getInt("id"));
                 s.setNombre(rs.getString("nombre"));
                 s.setPais(rs.getString("pais"));
-                s.setNiuvelSeguridad(rs.getInt("nivel_seguridad"));
+                s.setNivelSeguridad(rs.getInt("nivel_seguridad")); // Corregido el typo "Niuvel"
                 s.setAutorExamen(rs.getString("autor_examen"));
             }
         } catch (Exception e) {
+            System.out.println("❌ Error en FIND SOC: " + e.getMessage());
         } finally {
             motorSQL.close();
         }
@@ -125,11 +125,10 @@ public class SocDAOImpl extends AbstractDAO<Soc>{
                 lista.add(s);
             }
         } catch (Exception e) {
+            System.out.println("Error en FIND ALL SOCs: " + e.getMessage());
         } finally {
             motorSQL.close();
         }
         return lista;
     }
-    
-
 }

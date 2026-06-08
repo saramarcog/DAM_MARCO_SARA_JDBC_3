@@ -68,6 +68,12 @@ public class Incidente {
     public void setInforme(InformeIncidente informe) {
         this.informe = informe;
     }
-    public String getAutorExamen() { return autorExamen; }
-    public void setAutorExamen(String autorExamen) { this.autorExamen = autorExamen;}
+
+    public String getAutorExamen() {
+        return autorExamen;
+    }
+
+    public void setAutorExamen(String autorExamen) {
+        this.autorExamen = autorExamen;
+    }
 }
