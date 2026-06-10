@@ -1,7 +1,7 @@
 package examen.marco.sara.dao;
 /*
 =========================================
-AUTOR: SARA MARCO 
+AUTOR: SARA MARCO
 GRUPO: DAM2
 EXAMEN JDBC AWS RDS
 FECHA: 04/06/26
@@ -12,14 +12,15 @@ import examen.marco.sara.motores.MotorSQL;
 import java.util.ArrayList;
 
 public abstract class AbstractDAO<T> implements DAO<T> {
-    
+
     protected MotorSQL motorSQL;
     public AbstractDAO(MotorSQL motorSQL) {
         this.motorSQL = motorSQL;
     }
+
     public void executeDynamicUpdate(String tableName, int id, T beanObject) {
         StringBuilder sql = new StringBuilder("UPDATE " + tableName + " SET ");
-        java.lang.reflect.Field[] fields = beanObject.getClass().getDeclaredFields(); 
+        java.lang.reflect.Field[] fields = beanObject.getClass().getDeclaredFields();
         ArrayList<Object> values = new ArrayList<>();
 
         try {
@@ -27,15 +28,24 @@ public abstract class AbstractDAO<T> implements DAO<T> {
                 field.setAccessible(true);
                 Object value = field.get(beanObject);
 
-                if (value != null && !field.getName().equalsIgnoreCase("id") && 
-                    !field.getName().equalsIgnoreCase("centro") && !field.getName().equalsIgnoreCase("informe")) {
-                    
-                    sql.append(field.getName()).append(" = ?, ");
+                String columnName = field.getName().toLowerCase();
+
+                if (columnName.equals("malwaredetectado")) {
+                    columnName = "malware_detectado";
+                } else if (columnName.equals("nivelseveridad")) {
+                    columnName = "nivel_severidad";
+                } else if (columnName.equals("autorexamen")) {
+                    columnName = "autor_examen";
+                }
+
+                if (value != null && !field.getName().equalsIgnoreCase("id") &&
+                        !field.getName().equalsIgnoreCase("soc") && !field.getName().equalsIgnoreCase("informe")) {
+                    sql.append(columnName).append(" = ?, ");
                     values.add(value);
                 }
             }
-            
-            sql.setLength(sql.length() - 2); 
+
+            sql.setLength(sql.length() - 2);
             sql.append(" WHERE id = ?");
             values.add(id);
 
@@ -56,10 +66,9 @@ public abstract class AbstractDAO<T> implements DAO<T> {
             motorSQL.close();
         }
     }
-    
+
     protected void printError(Exception e) {
         System.out.println("Fallo en la base de datos: " + e.getMessage());
-    } 
+    }
 
-    
 }

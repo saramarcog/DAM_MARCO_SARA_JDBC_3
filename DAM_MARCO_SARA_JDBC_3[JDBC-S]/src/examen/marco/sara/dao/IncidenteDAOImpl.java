@@ -7,7 +7,7 @@ import examen.marco.sara.beans.Soc;
 import examen.marco.sara.beans.InformeIncidente;
 import examen.marco.sara.motores.MotorSQL;
 
-public class IncidenteDAOImpl extends AbstractDAO<Incidente> {
+public class IncidenteDAOImpl extends AbstractDAO<Incidente> implements IIncidenteDAO {
 
     public IncidenteDAOImpl(MotorSQL motorSQL) {
         super(motorSQL);
@@ -34,7 +34,7 @@ public class IncidenteDAOImpl extends AbstractDAO<Incidente> {
             motorSQL.executeUpdate();
             System.out.println("Incidente guardado!!!");
         } catch (Exception e) {
-            System.out.println("Error en ADD: " + e.getMessage());
+            System.out.println("error en ADD: " + e.getMessage());
         } finally {
             motorSQL.close();
         }
@@ -60,7 +60,7 @@ public class IncidenteDAOImpl extends AbstractDAO<Incidente> {
             motorSQL.executeUpdate();
             System.out.println("Registro con ID " + id + " actualizado.");
         } catch (Exception e) {
-            System.out.println("Error en UPDATE: " + e.getMessage());
+            System.out.println("error en UPDATE: " + e.getMessage());
         } finally {
             motorSQL.close();
         }
@@ -73,7 +73,7 @@ public class IncidenteDAOImpl extends AbstractDAO<Incidente> {
             motorSQL.prepare(SQL_DELETE);
             motorSQL.getPs().setInt(1, id);
             motorSQL.executeUpdate();
-            System.out.println("Registro eliminado.");
+            System.out.println("Registro eliminado");
         } catch (Exception e) {
             System.out.println("error en DELETE: " + e.getMessage());
         } finally {
@@ -138,6 +138,68 @@ public class IncidenteDAOImpl extends AbstractDAO<Incidente> {
             motorSQL.close();
         }
         return lista;
+    }
+    public ArrayList<Incidente> findIncidentesBySoc(int socId) {
+        ArrayList<Incidente> lista = new ArrayList<>();
+        String SQL_INCIDENTE_SOC = "SELECT * FROM incidentes WHERE fk_soc_id = ? ORDER BY id";
+        try {
+            motorSQL.connect();
+            motorSQL.prepare(SQL_INCIDENTE_SOC);
+            motorSQL.getPs().setInt(1, socId);
+            ResultSet rs = motorSQL.executeQuery();
+
+            while (rs.next()) {
+                Incidente i = new Incidente();
+                i.setId(rs.getInt("id"));
+                i.setCodigoIncidente(rs.getString("codigo_incidente"));
+                i.setTipoIncidente(rs.getString("tipo_incidente"));
+                i.setFechaDeteccion(rs.getString("fecha_deteccion"));
+                i.setEstado(rs.getString("estado"));
+                i.setAutorExamen(rs.getString("autor_examen"));
+                lista.add(i);
+            }
+        } catch (Exception e) {
+            System.out.println("error en FIND BY SOC: " + e.getMessage());
+        } finally {
+            motorSQL.close();
+        }
+        return lista;
+    }
+    public Incidente findIncidenteWithInforme(int incidenteId) {
+        Incidente inci = null;
+        String sql = "SELECT I.id AS inci_id, I.codigo_incidente, I.tipo_incidente, I.fecha_deteccion, I.estado, I.autor_examen, " +
+                "       INF.id AS inf_id, INF.malware_detectado, INF.nivel_severidad, INF.conclusion " +
+                "FROM incidentes I " +
+                "INNER JOIN informes_incidente INF ON I.id = INF.fk_incidente_id " +
+                "WHERE I.id = ?";
+        try {
+            motorSQL.connect();
+            motorSQL.prepare(sql);
+            motorSQL.getPs().setInt(1, incidenteId);
+            ResultSet rs = motorSQL.executeQuery();
+
+            if (rs.next()) {
+                inci = new Incidente();
+                inci.setId(rs.getInt("inci_id"));
+                inci.setCodigoIncidente(rs.getString("codigo_incidente"));
+                inci.setTipoIncidente(rs.getString("tipo_incidente"));
+                inci.setFechaDeteccion(rs.getString("fecha_deteccion"));
+                inci.setEstado(rs.getString("estado"));
+                inci.setAutorExamen(rs.getString("autor_examen"));
+
+                InformeIncidente inf = new InformeIncidente();
+                inf.setId(rs.getInt("inf_id"));
+                inf.setMalwareDetectado(rs.getBoolean("malware_detectado"));
+                inf.setNivelSeveridad(rs.getInt("nivel_severidad"));
+                inf.setConclusion(rs.getString("conclusion"));
+                inci.setInforme(inf);
+            }
+        } catch (Exception e) {
+            System.out.println("Error en FIND WITH INFORME: " + e.getMessage());
+        } finally {
+            motorSQL.close();
+        }
+        return inci;
     }
 
     public ArrayList<Incidente> findIncidentesCriticos() {

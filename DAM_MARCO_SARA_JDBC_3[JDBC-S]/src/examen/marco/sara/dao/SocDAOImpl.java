@@ -39,9 +39,9 @@ public class SocDAOImpl extends AbstractDAO<Soc> {
             motorSQL.getPs().setString(4, s.getAutorExamen());
 
             int rows = motorSQL.executeUpdate();
-            System.out.println("✨ [SUCCESS] Registro insertado en SOCs. Filas afectadas: " + rows);
+            System.out.println("Registro insertado en SOCs. Filas afectadas: " + rows);
         } catch (Exception e) {
-            System.out.println("❌ Error en ADD SOC: " + e.getMessage());
+            System.out.println("Error en ADD SOC: " + e.getMessage());
         } finally {
             motorSQL.close();
         }
@@ -58,9 +58,9 @@ public class SocDAOImpl extends AbstractDAO<Soc> {
             motorSQL.getPs().setInt(4, id);
 
             motorSQL.executeUpdate();
-            System.out.println("✨ [SUCCESS] Registro con ID " + id + " actualizado en SOCs.");
+            System.out.println("Registro con ID " + id + " actualizado en SOCs.");
         } catch (Exception e) {
-            System.out.println("❌ Error en UPDATE SOC: " + e.getMessage());
+            System.out.println("Error en UPDATE SOC: " + e.getMessage());
         } finally {
             motorSQL.close();
         }
@@ -74,9 +74,9 @@ public class SocDAOImpl extends AbstractDAO<Soc> {
             motorSQL.getPs().setInt(1, id);
 
             int rows = motorSQL.executeUpdate();
-            System.out.println("✨ [SUCCESS] Registro con ID " + id + " eliminado. Filas afectadas: " + rows);
+            System.out.println("registro con ID " + id + " eliminado. Filas afectadas: " + rows);
         } catch (Exception e) {
-            System.out.println("❌ Error en DELETE SOC: " + e.getMessage());
+            System.out.println("Error en DELETE SOC: " + e.getMessage());
         } finally {
             motorSQL.close();
         }
@@ -100,7 +100,7 @@ public class SocDAOImpl extends AbstractDAO<Soc> {
                 s.setAutorExamen(rs.getString("autor_examen"));
             }
         } catch (Exception e) {
-            System.out.println("❌ Error en FIND SOC: " + e.getMessage());
+            System.out.println("Error en FIND SOC: " + e.getMessage());
         } finally {
             motorSQL.close();
         }

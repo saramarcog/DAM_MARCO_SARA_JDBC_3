@@ -76,4 +76,18 @@ public class Incidente {
     public void setAutorExamen(String autorExamen) {
         this.autorExamen = autorExamen;
     }
+
+    @Override
+    public String toString() {
+        return "Incidente{" +
+                "id=" + id +
+                ", codigoIncidente='" + codigoIncidente + '\'' +
+                ", tipoIncidente='" + tipoIncidente + '\'' +
+                ", fechaDeteccion='" + fechaDeteccion + '\'' +
+                ", estado='" + estado + '\'' +
+                ", soc=" + soc +
+                ", informe=" + informe +
+                ", autorExamen='" + autorExamen + '\'' +
+                '}';
+    }
 }
